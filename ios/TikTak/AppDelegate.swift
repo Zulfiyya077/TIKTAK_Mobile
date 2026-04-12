@@ -40,9 +40,40 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
   override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    // Metro tapılmadıqda və ya main.jsbundle yoxdursa jsBundleURL nil ola bilər → "No script URL provided"
+    if let url = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index") {
+      return url
+    }
+#if targetEnvironment(simulator)
+    return Self.debugMetroBundleURL()
+#else
+    return nil
+#endif
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
+  }
+
+  /// Simulator üçün: Metro işləyəndə standart dev bundle URL-i (8081).
+  private static func debugMetroBundleURL() -> URL? {
+    var components = URLComponents()
+    components.scheme = "http"
+    components.host = "127.0.0.1"
+    components.port = 8081
+    components.path = "/index.bundle"
+    var items: [URLQueryItem] = [
+      URLQueryItem(name: "platform", value: "ios"),
+      URLQueryItem(name: "dev", value: "true"),
+      URLQueryItem(name: "lazy", value: "true"),
+      URLQueryItem(name: "minify", value: "false"),
+      URLQueryItem(name: "inlineSourceMap", value: "false"),
+      URLQueryItem(name: "modulesOnly", value: "false"),
+      URLQueryItem(name: "runModule", value: "true"),
+    ]
+    if let id = Bundle.main.bundleIdentifier {
+      items.append(URLQueryItem(name: "app", value: id))
+    }
+    components.queryItems = items
+    return components.url
   }
 }
