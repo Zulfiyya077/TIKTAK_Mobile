@@ -29,11 +29,15 @@ export function AuthFormShell({ children }: Props) {
         contentContainerStyle={[
           styles.scroll,
           {
-            paddingTop: insets.top + 8,
+            paddingTop: insets.top + 12,
             paddingBottom: insets.bottom + 24,
           },
         ]}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        contentInsetAdjustmentBehavior="automatic"
+        alwaysBounceVertical
+        showsVerticalScrollIndicator={false}>
         {children}
       </ScrollView>
     </KeyboardAvoidingView>
@@ -52,7 +56,7 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 24,
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     paddingBottom: 40,
   },
 });

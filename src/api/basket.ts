@@ -44,9 +44,9 @@ export async function addProductToBasket(productId: number): Promise<BasketData>
   return normalizeBasket(json);
 }
 
-/** POST /basket/:lineId/remove — sətir id (GET basket items[].id) */
-export async function removeOneBasketLine(lineId: number): Promise<BasketData> {
-  const res = await authFetch(`/basket/${lineId}/remove`, { method: 'POST' });
+/** POST /basket/:productId/remove — məhsul ID-si ilə bir ədəd azalt */
+export async function removeOneFromBasket(productId: number): Promise<BasketData> {
+  const res = await authFetch(`/basket/${productId}/remove`, { method: 'POST' });
   const json = await parseJson<RawBasket>(res);
   if (!res.ok || json.result === false) {
     const msg = typeof json.message === 'string' ? json.message : 'Əməliyyat alınmadı';

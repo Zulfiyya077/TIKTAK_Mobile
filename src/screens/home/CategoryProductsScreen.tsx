@@ -17,7 +17,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   addProductToBasket,
   fetchBasket,
-  removeOneBasketLine,
+  removeOneFromBasket,
 } from '../../api/basket';
 import { fetchCategories, fetchProducts } from '../../api/catalog';
 import type { BasketData, Category, Product } from '../../api/types';
@@ -25,6 +25,7 @@ import { ProductCard } from '../../components/home/ProductCard';
 import type { HomeStackParamList } from '../../navigation/types';
 import { colors, layout } from '../../theme';
 import { ProductDetailSheet } from '../../components/home/ProductDetailSheet';
+import { getErrorMessage } from '../../utils/error';
 
 export function CategoryProductsScreen() {
   const navigation =
@@ -102,25 +103,21 @@ export function CategoryProductsScreen() {
       const b = await addProductToBasket(productId);
       setBasket(b);
       Alert.alert('Uğurlu', 'Məhsul səbətə əlavə edildi!');
-    } catch (err: any) {
-      Alert.alert('Xəta', err.message || 'Səbətə əlavə olunmadı');
+    } catch (error: unknown) {
+      Alert.alert('Xəta', getErrorMessage(error, 'Səbətə əlavə olunmadı'));
     } finally {
       setBusyId(null);
     }
   }
 
   async function handleMinus(productId: number) {
-    const line = lineFor(productId);
-    if (!line) {
-      return;
-    }
     setBusyId(productId);
     try {
-      const b = await removeOneBasketLine(line.id);
+      const b = await removeOneFromBasket(productId);
       setBasket(b);
       Alert.alert('Məlumat', 'Məhsulun sayı azaldıldı');
-    } catch (err: any) {
-      Alert.alert('Xəta', err.message || 'Əməliyyat alınmadı');
+    } catch (error: unknown) {
+      Alert.alert('Xəta', getErrorMessage(error, 'Əməliyyat alınmadı'));
     } finally {
       setBusyId(null);
     }

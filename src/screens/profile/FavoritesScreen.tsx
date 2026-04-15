@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { fetchProducts } from '../../api/catalog';
-import { fetchBasket, addProductToBasket, removeOneBasketLine } from '../../api/basket';
+import { fetchBasket, addProductToBasket, removeOneFromBasket } from '../../api/basket';
 import type { BasketData, Product } from '../../api/types';
 import { ProductCard } from '../../components/home/ProductCard';
 import { ProductDetailSheet } from '../../components/home/ProductDetailSheet';
@@ -60,11 +60,9 @@ export function FavoritesScreen() {
   }
 
   async function handleMinus(productId: number) {
-    const line = lineFor(productId);
-    if (!line) return;
     setBusyId(productId);
     try {
-      const b = await removeOneBasketLine(line.id);
+      const b = await removeOneFromBasket(productId);
       setBasket(b);
     } finally {
       setBusyId(null);

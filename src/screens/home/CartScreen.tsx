@@ -14,7 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   addProductToBasket,
   fetchBasket,
-  removeOneBasketLine,
+  removeOneFromBasket,
 } from '../../api/basket';
 import type { BasketData } from '../../api/types';
 import { colors } from '../../theme';
@@ -22,6 +22,7 @@ import { ScreenHeader } from '../../components/layout/ScreenHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../../navigation/types';
+import { getErrorMessage } from '../../utils/error';
 
 const PLACEHOLDER =
   'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=400&q=80';
@@ -54,21 +55,21 @@ export function CartScreen() {
       const b = await addProductToBasket(productId);
       setBasket(b);
       Alert.alert('Uğurlu', 'Sayı artırıldı');
-    } catch (err: any) {
-      Alert.alert('Xəta', err.message || 'Error occurred');
+    } catch (error: unknown) {
+      Alert.alert('Xəta', getErrorMessage(error, 'Əməliyyat alınmadı'));
     } finally {
       setBusyId(null);
     }
   }
 
-  async function handleMinus(lineId: number) {
-    setBusyId(lineId);
+  async function handleMinus(productId: number) {
+    setBusyId(productId);
     try {
-      const b = await removeOneBasketLine(lineId);
+      const b = await removeOneFromBasket(productId);
       setBasket(b);
       Alert.alert('Məlumat', 'Sayı azaldıldı');
-    } catch (err: any) {
-      Alert.alert('Xəta', err.message || 'Error occurred');
+    } catch (error: unknown) {
+      Alert.alert('Xəta', getErrorMessage(error, 'Əməliyyat alınmadı'));
     } finally {
       setBusyId(null);
     }
@@ -120,15 +121,15 @@ export function CartScreen() {
             <View style={styles.quantityContainer}>
               <Pressable
                 style={styles.qtyBtn}
-                onPress={() => handleMinus(item.id)}
-                disabled={busyId === item.id}>
+                onPress={() => handleMinus(item.product.id)}
+                disabled={busyId === item.product.id}>
                 <MaterialIcons name={item.quantity > 1 ? "remove" : "delete-outline"} size={20} color="#FFFFFF" />
               </Pressable>
               <Text style={styles.qtyText}>{item.quantity}</Text>
               <Pressable
                 style={styles.qtyBtn}
                 onPress={() => handleAdd(item.product.id)}
-                disabled={busyId === item.id}>
+                disabled={busyId === item.product.id}>
                 <MaterialIcons name="add" size={20} color="#FFFFFF" />
               </Pressable>
             </View>

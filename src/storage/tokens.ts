@@ -1,10 +1,7 @@
 /**
- * Token saxlama: yalnız RAM (process yaddaşı).
- *
- * @react-native-async-storage paketi çıxarılıb — RN 0.84 + New Arch mühitində
- * bəzən RNAsyncStorage TurboModulu null qalır və "cannot create db" xətası verirdi.
- * Tokenlar app bağlanana qədər saxlanılır; tam persist üçün sonra MMKV və ya
- * stabil AsyncStorage həlli əlavə etmək olar.
+ * Token storage: in-memory only.
+ * APK build stabilliyi üçün native storage asılılığı çıxarılıb.
+ * Qeyd: tətbiq tam bağlananda session silinir.
  */
 
 const ACCESS = '@tiktak/access_token';
@@ -17,8 +14,16 @@ export async function saveTokens(access: string, refresh: string): Promise<void>
   memoryStorage[REFRESH] = refresh;
 }
 
+export async function saveAccessToken(access: string): Promise<void> {
+  memoryStorage[ACCESS] = access;
+}
+
 export async function getAccessToken(): Promise<string | null> {
   return memoryStorage[ACCESS] ?? null;
+}
+
+export async function getRefreshToken(): Promise<string | null> {
+  return memoryStorage[REFRESH] ?? null;
 }
 
 export async function clearTokens(): Promise<void> {

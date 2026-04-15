@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -18,7 +19,16 @@ export function WelcomeScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + 20 }]}>
+    <ScrollView
+      style={styles.root}
+      contentContainerStyle={[
+        styles.rootContent,
+        { paddingTop: insets.top, paddingBottom: insets.bottom + 20 },
+      ]}
+      keyboardShouldPersistTaps="handled"
+      contentInsetAdjustmentBehavior="automatic"
+      alwaysBounceVertical
+      showsVerticalScrollIndicator={false}>
       <View style={styles.content}>
         <Image
           source={IMAGES.fruitSplash}
@@ -29,7 +39,7 @@ export function WelcomeScreen({ navigation }: Props) {
           Sizə daha əlçatan olması üçün qeydiyyatdan keçərək{"\n"}davam edə bilərsiniz 🥰
         </Text>
       </View>
-      
+
       <View style={styles.footer}>
         <PrimaryButton
           title="Qeydiyyat"
@@ -43,7 +53,7 @@ export function WelcomeScreen({ navigation }: Props) {
           </Pressable>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -51,12 +61,16 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  rootContent: {
     paddingHorizontal: 24,
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   content: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 12,
   },
   image: {
     width: '100%',
